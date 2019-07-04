@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from base.models import AuthorModel, CategoryModel
+from base.models import AuthorModel, CategoryModel, BookModel
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -19,3 +19,21 @@ class CategorySerializer(serializers.ModelSerializer):
         model = CategoryModel
         fields = ('id', 'name')
         read_only_fields = ('id',)
+
+
+class BookSerializer(serializers.ModelSerializer):
+    """Serializer for book object"""
+    authors = serializers.SlugRelatedField(
+        many=True,
+        slug_field='name',
+        queryset=AuthorModel.objects.all()
+    )
+    categories = serializers.SlugRelatedField(
+        many=True,
+        slug_field='name',
+        queryset=CategoryModel.objects.all()
+    )
+
+    class Meta:
+        model = BookModel
+        fields = ('title', 'description', 'authors', 'categories')

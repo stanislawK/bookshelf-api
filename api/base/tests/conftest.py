@@ -21,3 +21,15 @@ def author():
 def category():
     from base.models import CategoryModel
     return CategoryModel.objects.create(name="Fiction")
+
+
+@pytest.fixture
+def book(author, category):
+    from base.models import BookModel
+    book = BookModel.objects.create(
+        title='Hobbit',
+        description='Book about hobbits'
+    )
+    book.authors.add(author)
+    book.categories.add(category)
+    return book

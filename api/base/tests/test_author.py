@@ -5,7 +5,7 @@ from books.serializers import AuthorSerializer
 
 @pytest.mark.django_db
 class TestAuthor():
-    """Tests for Author serializer"""
+    """Tests for author serializer"""
     def test_serialize_valid_author(self, author):
         serializer = AuthorSerializer(author)
 
