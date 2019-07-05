@@ -33,3 +33,9 @@ def book(author, category):
     book.authors.add(author)
     book.categories.add(category)
     return book
+
+
+@pytest.fixture
+def client():
+    from rest_framework.test import APIClient
+    return APIClient()
