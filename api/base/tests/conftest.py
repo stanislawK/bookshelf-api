@@ -39,3 +39,12 @@ def book(author, category):
 def client():
     from rest_framework.test import APIClient
     return APIClient()
+
+
+@pytest.fixture
+def book_payload(book):
+    payload = {
+        'title': book.title,
+        'description': book.description,
+    }
+    return payload
