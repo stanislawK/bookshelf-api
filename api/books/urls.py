@@ -6,6 +6,7 @@ from books import views
 router = DefaultRouter()
 router.register('books', views.BooksList)
 router.register('authors', views.AuthorViewSet)
+router.register('categoris', views.CategoryViewSet)
 
 app_name = 'book'
 
