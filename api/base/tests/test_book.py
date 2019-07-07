@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 import pytest
 
-from base.models import BookModel
+from base.models import AuthorModel, BookModel
 from books.serializers import BookSerializer
 
 BOOKS_URL = reverse('book:bookmodel-list')
@@ -40,10 +40,36 @@ class TestBook():
         assert response.status_code == status.HTTP_200_OK
         assert response.data == serializer.data
 
-    def test_create_book(self, book, book_payload, client):
+    def test_create_book(self, book_payload, client):
         """Test create new book"""
         response = client.post(BOOKS_URL, book_payload)
 
+        book = BookModel.objects.all()[0]
+
+        assert response.status_code == status.HTTP_201_CREATED
+        for key in book_payload.keys():
+            assert book_payload[key] == getattr(book, key)
+
+    def test_create_book_with_author(self, author, book_payload, client):
+        book_payload['authors'] = [author.name]
+
+        response = client.post(BOOKS_URL, book_payload)
+
+        book = BookModel.objects.all()[0]
+
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['title'] == book.title
-        assert response.data['description'] == book.description
+        assert response.data['authors'][0] == author.name
+
+    def test_create_book_with_authors(self, book_payload, client):
+        book_payload['authors'] = ['Tolkien', 'Okken']
+
+        response = client.post(BOOKS_URL, book_payload)
+
+        book = BookModel.objects.all()[0]
+        authors = AuthorModel.objects.all()
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data['title'] == book.title
+        for author in book_payload['authors']:
+            assert authors.get(name=author)
