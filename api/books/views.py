@@ -26,10 +26,18 @@ class BooksList(viewsets.ModelViewSet):
 
     def create(self, request):
         authors = request.data.getlist('authors')
+        categories = request.data.getlist('categories')
+
         if authors:
             for i, name in enumerate(authors):
                 author = add_author(name)
                 request.data.getlist('authors')[i] = author
+
+        if categories:
+            for i, name in enumerate(categories):
+                category = add_category(name)
+                request.data.getlist('categories')[i] = category
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -52,3 +60,11 @@ def add_author(_name):
         author.is_valid(raise_exception=True)
         author.save()
     return AuthorModel.objects.get(name=_name)
+
+
+def add_category(_name):
+    if not CategoryModel.objects.filter(name=_name):
+        category = CategorySerializer(data={'name': _name})
+        category.is_valid(raise_exception=True)
+        category.save()
+    return CategoryModel.objects.get(name=_name)
